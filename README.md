@@ -8,82 +8,42 @@ This is a Keras code repository accompanying the following paper:
 
 &copy; Johannes Zeitler (johannes.zeitler@fau.de) and Christof Weiß (christof.weiss@audiolabs-erlangen.de), 2020/21
 
-
-################################### FILES & FOLDERS ##########################################
-
-Folders:
-
- Deprecated........... development code scripts that are no longer needed
- figures.............. some figures that were saved from scripts
- Figures_Report....... generates all plots for report
- LibFMP............... AudioLabs LibFMP library
- logs................. training log files
- Models............... trained CNN models
- Presentation_Dec20... code and figures for final presentation
- Presentation_Nov20... code and figures for intermediate presentation
- processData.......... jupyter notebooks for data preprocessing (copy back to main (Code) folder for execution)
- trainScripts......... python files for automated model training (copy back to main (Code) folder for execution)
+This repository only contains exemplary code and pre-trained models for most of the paper's experiments as well as some individual examples. Some of the datasets used in the paper are publicly available (at least partially), e.g.:
+* [Schubert Winterreise Dataset (SWD)](https://zenodo.org/record/5139893#.YWRcktpBxaQ)
+* [MusicNet](https://homes.cs.washington.edu/~thickstn/musicnet.html)
+For details and references, please see the paper.
 
 
-Jupyter Notebooks:
+## 1. Overview: files and folders
 
- checkFrameShifts_SMD............... check and correct alignment of audio and labels for SMD 
- eval_InputComplexity............... evaluate impact of basic input and network complexity
- evaluateAndPredict_BeethovenPiano.. predict and evaluate chroma estimation for Beethoven
- ExploreDatasets.................... dataset statistics
- mCNN_otherDatasets_eval2........... training/testing on different datasets and with different networks
- mCNN_otherDatasets_eval_Piano...... training/testing on different piano datasets
- mCNN_Schubert_crossVal-eval........ evaluation of Schubert cross-validation 
- mCNN_Schubert_crossVal_HPRS_eval... evaluation of hrps-assisted training
- mCNN_Schubert_trainOnPitch......... pre-training on pitch annotations
- musicalCNN_chromas_sonifications... sonifications and detailed plots of estimated chromagrams
- numberOfParameters................. overview of number of trainable parameters in different networks
- processData_Schubert_Winterreise_tuning_50HZ
-  .................................. Dataset preprocessing, demonstrated at Schubert's Winterreise
- splitDatasets...................... split large files into smaller pieces for training purposes
- trainingCurves..................... training metrics for different architectures and datasets
- verifyEfficientHCQT................ check whether efficient HCQT implementation matches the 'brute force' version
+### Folders:
+* _Data:_    Exemplary data folder with some examples from Schubert Winterreise Dataset
+* _LibFMP:_  AudioLabs LibFMP library, see [https://pypi.org/project/libfmp/](PyPI) for an update version
+* _Models:_  Pre-trained CNN models
+* _PrecomputedResults_: Pre-computed evaluation measures, to be loaded for reproducing the figures in the paper
+* _trainScripts_:       Python files for automated model training - __just for information, not executable due to missing data!__
 
 
-Python Scripts:
-
- estimateChromas........................ load an audio file and estimate chromagram with a pre-trained CNN
- mCNN_Schubert_crossVal_HPRS............ HRPS test script
- musicalCNN_Jo1_Schubert_TestScript..... initial grid search over network parameters
- musicalCNN_Jo_lastConv_maxPool_Schubert_50Hz_crossVal
-  ...................................... cross-Validaiton on Schubert dataset with proposed model and different BCE weights
- musicalCNN_Tim_Beethoven_50Hz_crossVal. cross-validation with Tim's mCNN on Beethoven
- musicalCNN_Tim_Schubert_50Hz_crossVal.. cross-validation with Tim's mCNN on Schubert
- musicalCNN_Tim_Schubert_TestScript..... initial grid search over network parameters with Tim's mCNN
+### Jupyter Notebooks:
+* _01_preprocess_data_schubert_winterreise.ipynb:_ Dataset preprocessing, demonstrated at Schubert's Winterreise
+* _02_evaluate_model_parameters.ipynb:_    Evaluate impact of basic model parameters (__first part of Section 4 in the paper__)
+* _03_evaluate_datasets_and_models.ipynb:_ Training/testing on different datasets and with different networks (__Figures 3 and 4 in the paper__)
+* _04_demo_estimate_pitchclasses.ipynb:_   Load an audio file and estimate pitch classes with a pre-trained CNN
 
 
-Libraries:
-
- customModels....... CNN model definitions
- FrameGenerators.... tensorflow generators for feeding data to train, evaluate and predict functions
- harmonicCQT........ efficient implementation of harmonic constant-Q-transform
- utils.............. collection of useful functions
- utils_DL........... collection of useful Deep-Learning-related functions
+### Python Scripts and libraries:
+* _estimatePitchClasses.py:_ Command line tool to estimate chromagram with a pre-trained CNN
+* _customModels:_    CNN model definitions
+* _FrameGenerators:_ Tensorflow generators for feeding data to train, evaluate and predict functions
+* _harmonicCQT:_     Efficient implementation of the harmonic constant-Q-transform (HCQT)
+* _utils:_           Collection of useful functions for preprocessing etc.
+* _utils_DL:_        Collection of useful functions for the deep-learning pipeline
  
+### Environment file:
+* _environment.yml_: To install Python/Keras environment _pitchclass_cnn_
  
- 
- 
-################################## BASIC WORKFLOW ##########################################
 
-To get an overview of the basic workflow used in this projects, take a look at the following files
- 
-   Data preprocessing:
-     processData_...    compute hcqts and ground-truth chromagrams
-     splitDatasets      split songs into smaller segments for better training performance
-   
-   Training:
-     trainScript_...   Model and training setup (choose e.g. trainScript_..._zerosWeight20 for custom BCE-loss)
-       -> customModels: model Definition
-       -> FrameGenerators: Train & Validation data generation
-       -> utils_DL: autoTrain() function for automated training
-       
-   Evaluation:
-     mCNN_otherDatasets_eval2: evaluate performance of a pre-trained model
-   
-   Prediction:
-     estimateChromas.py: predict chromagrams from audio with pre-trained model
+## 2. Example: predict pitch classes with pre-trained models
+Start the file __estimatePitchClasses.py__ from a Python shell:  
+__conda activate pitchclass_cnn__  
+__python estimatePitchClasses.py -s <audio_file.wav> -t <target_file.npy> -r <sample rate of output features> -n (L2-normalize feature sequence)__

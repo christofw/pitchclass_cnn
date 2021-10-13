@@ -1,0 +1,76 @@
+import numpy as np
+import os
+
+import tensorflow as tf
+from random import shuffle
+
+from tensorflow.keras.optimizers import Adam
+
+import datetime
+import LibFMP.B
+from utils_DL import autoTrain, weightedBinaryCrossentropy
+import random
+from customModels import musicalCNN_Jo_lastConv_maxPool_LN
+
+
+########### MODEL ######################################################
+model = musicalCNN_Jo_lastConv_maxPool_LN(B=3, 
+                       C=5, 
+                       L=75, 
+                       numOctaves=6, 
+                       numFilters=[100,100,50,5], 
+                       size_filt1=(15,15), 
+                       size2_filt2=3, stride2_filt2=3, 
+                       dropout=0.2,
+                       alpha=0.3)
+model.summary()
+
+opt = Adam(learning_rate=0.001)
+
+model.compile(optimizer=opt, loss='binary_crossentropy', 
+            metrics=['accuracy','binary_accuracy','binary_crossentropy','cosine_similarity','Precision','Recall'], 
+            run_eagerly=False)
+
+modelName = datetime.datetime.now().strftime(format = "%Y-%m-%d_%H-%M-%S") + 'mCNN_WIDE_trainMusicNet-SMD-WagnerPianoScore'
+###################################################################################
+numValFiles = 100
+
+musicNetFolder = '../../../Datasets/MusicNet_tuning_50_snips'
+musicNetFiles =  [f for f in os.listdir(os.path.join(musicNetFolder, 'Chroma')) if '.npy' in f]
+shuffle(musicNetFiles)
+musicNetTrainFiles = musicNetFiles[numValFiles:]
+musicNetValFiles = musicNetFiles[:numValFiles]
+
+smdFolder = '../../../Datasets/SMD_tuning_50_snips'
+smdFiles =  [f for f in os.listdir(os.path.join(smdFolder, 'Chroma')) if '.npy' in f]
+shuffle(smdFiles)
+smdTrainFiles = smdFiles[numValFiles:]
+smdValFiles = smdFiles[:numValFiles]
+
+wagnerFolder = '../../../Datasets/WagnerRing_PianoScore_tuning_50_snips'
+wagnerFiles =  [f for f in os.listdir(os.path.join(wagnerFolder, 'Chroma')) if '.npy' in f]
+shuffle(wagnerFiles)
+wagnerTrainFiles = wagnerFiles[numValFiles:]
+wagnerValFiles = wagnerFiles[:numValFiles]
+
+
+trainData = {'files': [musicNetTrainFiles, smdTrainFiles, wagnerTrainFiles],
+             'pathHCQT': [os.path.join(musicNetFolder, 'HCQT'),
+                         os.path.join(smdFolder, 'HCQT'),
+                         os.path.join(wagnerFolder, 'HCQT')],
+             'pathChroma': [os.path.join(musicNetFolder, 'Chroma'),
+                         os.path.join(smdFolder, 'Chroma'),
+                         os.path.join(wagnerFolder, 'Chroma')]}
+
+valData = {'files': [musicNetValFiles, smdValFiles, wagnerValFiles],
+             'pathHCQT': [os.path.join(musicNetFolder, 'HCQT'),
+                         os.path.join(smdFolder, 'HCQT'),
+                         os.path.join(wagnerFolder, 'HCQT')],
+             'pathChroma': [os.path.join(musicNetFolder, 'Chroma'),
+                         os.path.join(smdFolder, 'Chroma'),
+                         os.path.join(wagnerFolder, 'Chroma')]}
+
+
+##################################################################################
+
+autoTrain(model, modelName, trainData, valData, max_epochs=200, steps_per_epoch=4000, batchSize_train=25, batchSize_val=50, lr_decay=0.2, lr_min=1e-6, lr_patience=3, earlyStopping_patience=8, criterion='val_loss', criterion_mode='min', log=True)
