@@ -46,5 +46,4 @@ For details and references, please see the paper.
 ## 2. Example: predict pitch classes with pre-trained models
 Start the file __estimatePitchClasses.py__ from a Python shell:  
 __conda activate pitchclass_cnn__  
-__python estimatePitchClasses.py -s <audio_file.wav> -t <target_file.npy> -r__
-__<sample rate of output features> -n (L2-normalize feature sequence)__
+__python estimatePitchClasses.py -s <audio_file.wav> -t <target_file.npy> -r <output_feature_rate> -n (L2-normalize feature sequence)__
