@@ -21,7 +21,7 @@ For details and references, please see the paper.
 * _LibFMP:_  AudioLabs LibFMP library, see [https://pypi.org/project/libfmp/](PyPI) for an update version
 * _Models:_  Pre-trained CNN models
 * _PrecomputedResults_: Pre-computed evaluation measures, to be loaded for reproducing the figures in the paper
-* _trainScripts_:       Python files for automated model training - __just for information, not executable due to missing data!__
+* _TrainScripts_:       Python files for automated model training - __just for information, not executable due to missing data!__
 
 
 ### Jupyter Notebooks:
