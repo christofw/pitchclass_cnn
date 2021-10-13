@@ -18,7 +18,7 @@ For details and references, please see the paper.
 
 ### Folders:
 * _Data:_    Exemplary data folder with some examples from Schubert Winterreise Dataset
-* _LibFMP:_  AudioLabs LibFMP library, see [https://pypi.org/project/libfmp/](PyPI) for an update version
+* _LibFMP:_  AudioLabs LibFMP library, see [here](https://pypi.org/project/libfmp/) for an update version
 * _Models:_  Pre-trained CNN models
 * _PrecomputedResults_: Pre-computed evaluation measures, to be loaded for reproducing the figures in the paper
 * _TrainScripts_:       Python files for automated model training - __just for information, not executable due to missing data!__
